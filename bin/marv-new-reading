@@ -5,7 +5,7 @@ use DBI;
 use Text::CSV;
 use ConfigReader::Simple;
 
-my $config = ConfigReader::Simple->new('/etc/getfit.cfg');
+my $config = ConfigReader::Simple->new('/etc/getfit-marv.cfg');
 die "Could not read config! $ConfigReader::Simple::ERROR\n"
   unless ref $config;
 
@@ -29,15 +29,18 @@ sub new_reading {
 
 sub create_table_weight_readings {
     my $dbh = shift;
+    my $initial_time = 1259717580; # December 1, 2009 5:33 PM
+    my $initial_weight = 307.7;
     $dbh->do(
 	"CREATE TABLE weight_readings (id INTEGER PRIMARY KEY AUTOINCREMENT, unix_epoch integer UNIQUE, weight DECIMAL )"
 	);
-    $dbh->do("INSERT INTO weight_readings VALUES (NULL,1262731713,177.8)");
+    $dbh->do("INSERT INTO weight_readings VALUES (NULL,1259717580,307.7)");
+    
 }
 
-my $initial_time = 1262731713; # Tuesday, Jan 5 14:49
-my $initial_weight = 177.8;
-my $loss_rate = 1000; # goal weight loss rate in cals/day, about 2 lb per week
+my $initial_time = 1259717580; # December 1, 2009 5:33 PM
+my $initial_weight = 307.7;
+my $loss_rate = 500; # goal weight loss rate in cals/day, 1 lb per week
 my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
 my $weight_goal = &get_weight_goal($initial_time, $initial_weight, $lbs_per_second);
 
