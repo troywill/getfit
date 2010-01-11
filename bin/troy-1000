@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-print `clear`;
 my $initial_time = 1262731713; # Tuesday, Jan 5 14:49
 my $initial_weight = 177.8;
 my $loss_rate = 1000; # goal weight loss rate in cals/day, about 2 lb per week
@@ -10,9 +9,6 @@ my $weight_goal = &get_weight_goal($initial_time, $initial_weight, $lbs_per_seco
 
 printf( "Initial weight: %.2f\n", $initial_weight);
 print "Weight goal: $weight_goal\n";
-
-print "\tPress Enter to quit"; <STDIN>;
-
 
 sub get_weight_goal {
     my ( $initial_time, $initial_weight, $lbs_per_second ) = @_;
