@@ -18,16 +18,12 @@ int main(int argc, char *argv[])
   pedometer->setStyleSheet(QString::fromUtf8("background-color: rgb(0, 0, 0); color: rgb(253,233,93)"));
   pedometer->setGeometry(0,300,512,300);
   pedometer->show();
+  pedometer->setFocus();
 
   Pacer *pacer = new Pacer(&window);
   pacer->setStyleSheet(QString::fromUtf8("background-color: rgb(0, 0, 0); color: rgb(253,233,93)"));
   pacer->setGeometry(0,0,512,300);
   pacer->show();
-
-
-
-
-
 
 
 
@@ -39,11 +35,11 @@ int main(int argc, char *argv[])
 
   
 
+  QObject::connect(pacer,SIGNAL(pacerChanged(int)),percent,SLOT(setPacerValue(int)));
+  QObject::connect(pedometer,SIGNAL(pedometerChanged(int)),percent,SLOT(setPedometerValue(int)));
 
 
 
-  
-  pedometer->setFocus();
   return app.exec();
 }
 // See http://simple.wikipedia.org/wiki/Purple

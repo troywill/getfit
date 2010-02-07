@@ -10,6 +10,8 @@ class ArrowLcd : public QLCDNumber
     public:
   ArrowLcd(QWidget *parent = 0);
   int steps;
+  int newSteps;
+  int oldSteps;
 
   private slots:
   void arrowDisplay(int);
@@ -17,5 +19,13 @@ class ArrowLcd : public QLCDNumber
   void countUp();
   void countDown();
   void saveSteps(int);
+
+  //////////////////////////////////////
+  public slots:
+  void setPedometer(int);
+  
+  signals:
+  void pedometerChanged(int);
+  //////////////////////////////////////
 };
 #endif

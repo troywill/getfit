@@ -7,8 +7,10 @@ class Percent : public QLCDNumber
 
     public:
   Percent(QWidget *parent = 0);
-
+  int pacer_value;
+  int pedometer_steps;
   private slots:
-  void update();
+  void setPacerValue(int);
+  void setPedometerValue(int);
 };
 #endif

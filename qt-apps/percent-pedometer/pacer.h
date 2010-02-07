@@ -7,8 +7,16 @@ class Pacer : public QLCDNumber
 
     public:
   Pacer(QWidget *parent = 0);
+  int newSteps;
+  int oldSteps;
 
+  public slots:
+  void setPacer(int newSteps);
+  
   private slots:
   void showTime();
+
+  signals:
+  void pacerChanged(int);
 };
 #endif

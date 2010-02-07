@@ -34,5 +34,15 @@ void Pacer::showTime()
   
   QString text = start.toString("hh:mm:ss");
   QString foo = QString::number ( diff );
-  display(step_goal);
+  setPacer(step_goal);
 }
+
+void Pacer::setPacer(int newSteps)
+{
+  if ( newSteps != oldSteps) {
+    oldSteps = newSteps;
+    display(newSteps);
+    emit pacerChanged(newSteps);
+  }
+}
+

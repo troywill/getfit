@@ -44,8 +44,8 @@ void ArrowLcd::arrowDisplay(int steps)
 void ArrowLcd::countUp()
 {
   steps = steps + 100;
-  display(steps);
   saveSteps(steps);
+  setPedometer(steps);
 }
 
 void ArrowLcd::countDown()
@@ -55,8 +55,8 @@ void ArrowLcd::countDown()
   if ( steps < 0 ) {
     steps = 0;
   }
-  display(steps);
   saveSteps(steps);
+  setPedometer(steps);
 }
 
 void ArrowLcd::keyPressEvent(QKeyEvent *event)
@@ -70,5 +70,14 @@ void ArrowLcd::keyPressEvent(QKeyEvent *event)
     break;
   // default:
   //   QWidget::keyPressEvent(event);
+  }
+}
+
+void ArrowLcd::setPedometer(int newSteps)
+{
+  if ( newSteps != oldSteps) {
+    oldSteps = newSteps;
+    display(newSteps);
+    emit pedometerChanged(newSteps);
   }
 }

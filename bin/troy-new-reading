@@ -32,12 +32,12 @@ sub create_table_weight_readings {
     $dbh->do(
 	"CREATE TABLE weight_readings (id INTEGER PRIMARY KEY AUTOINCREMENT, unix_epoch integer UNIQUE, weight DECIMAL )"
 	);
-    $dbh->do("INSERT INTO weight_readings VALUES (NULL,1262731713,177.8)");
+    $dbh->do("INSERT INTO weight_readings VALUES (NULL,1263667739,179.0)");
 }
 
-my $initial_time = 1262731713; # Tuesday, Jan 5 14:49
-my $initial_weight = 177.8;
-my $loss_rate = 1000; # goal weight loss rate in cals/day, about 2 lb per week
+my $initial_time = 1263667739; # Jan 16, 2010
+my $initial_weight = 179.0;
+my $loss_rate = 500; # goal weight loss rate in cals/day, about 2 lb per week
 my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
 my $weight_goal = &get_weight_goal($initial_time, $initial_weight, $lbs_per_second);
 
@@ -52,3 +52,4 @@ sub get_weight_goal {
     $weight_goal = sprintf("%.2f",$weight_goal);
     return $weight_goal;
 }
+

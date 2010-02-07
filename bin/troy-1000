@@ -1,14 +1,23 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-my $initial_time = 1262731713; # Tuesday, Jan 5 14:49
-my $initial_weight = 177.8;
-my $loss_rate = 1000; # goal weight loss rate in cals/day, about 2 lb per week
+use ConfigReader::Simple;
+my $config = ConfigReader::Simple->new('/etc/getfit-troy.cfg');
+die "Could not read config! $ConfigReader::Simple::ERROR\n"
+  unless ref $config;
+my $GETFIT_DATABASE = $config->get('GETFIT_DATABASE');
+my $initial_time = $config->get('initial_time');
+my $initial_weight = $config->get('initial_weight');
+my $loss_rate = $config->get('loss_rate');
+my $goal_weight = $config->get('goal_weight');
+
+print "\n------- $goal_weight --------\n";
+
 my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
 my $weight_goal = &get_weight_goal($initial_time, $initial_weight, $lbs_per_second);
 
 printf( "Initial weight: %.2f\n", $initial_weight);
-print "Weight goal: $weight_goal\n";
+print "Weight goal this moment: $weight_goal\n";
 
 sub get_weight_goal {
     my ( $initial_time, $initial_weight, $lbs_per_second ) = @_;
@@ -18,4 +27,26 @@ sub get_weight_goal {
     $weight_goal = sprintf("%.2f",$weight_goal);
     return $weight_goal;
 }
-# 1262731713
+
+&calculate_number_of_hours_until_goal_weight( $initial_weight, $initial_time, $goal_weight, $lbs_per_second );
+
+sub calculate_number_of_hours_until_goal_weight {
+    my ( $initial_weight, $initial_time, $goal_weight, $loss_rate ) = @_;
+    print "iw: $initial_weight\n";
+    print "$initial_time\n";
+    print "$loss_rate\n";
+    print "$goal_weight\n";
+    my $weight_loss = $initial_weight - $goal_weight;
+    print $weight_loss, "\n\n";
+    my $seconds = $weight_loss / $loss_rate;
+    print "seconds: $seconds\n";
+    my $final_unix_time = $initial_time + $seconds;
+    print "final_unix_time = $final_unix_time\n";
+    print `date --date=\"\@$final_unix_time\"`;
+    my $hours = $seconds / (60*60);
+    print "hours: $hours\n";
+    my $days = $hours / 24;
+    print "days: $days\n";
+    my $seconds_from_now = $final_unix_time - time;
+    print $seconds_from_now / 3600;
+}

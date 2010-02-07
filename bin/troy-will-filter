@@ -14,7 +14,6 @@ die "Could not read config! $ConfigReader::Simple::ERROR\n"
   unless ref $config;
 
 my $GETFIT_DATABASE = $config->get('GETFIT_DATABASE');
-print "DEBUG: $GETFIT_DATABASE\n";
 my $dbh =
   DBI->connect( "dbi:SQLite:$GETFIT_DATABASE", "", "",
     { RaiseError => 1, AutoCommit => 1 } );
@@ -74,7 +73,6 @@ sub run_will_filter {
         }
         elsif ( $weight_reading < $min_weight ) {
             $filter_weight = $min_weight;
-	    print "DEBUG: MIN $weight_reading, $min_weight, $filter_weight\n";
         }
         else {
             $filter_weight = $weight_reading;
@@ -106,3 +104,5 @@ foreach my $row (@$installed_packages) {
 }
 
 exit;
+1263667681
+1263667739
