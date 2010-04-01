@@ -4,7 +4,7 @@ use strict;
 print `clear`;
 # Note: TDW Marv would like to get down to: 220 to 230
 my $left_margin = "\t\t";
-my $current_weight = 289.3;
+my $current_weight = 289.20;
 my $initial_time = 1259717580; # December 1, 2009 5:33 PM
 my $initial_weight = 307.7;
 my $loss_rate = 500; # goal weight loss rate in cals/day, about 1 lb per week
@@ -39,6 +39,7 @@ sub history {
     printf( "${left_margin}Jan 4: %.2f\n", 292.2);
     printf( "${left_margin}Jan 6: %.2f\n", 290.8);
     printf( "${left_margin}Mar 15: %.2f\n", 289.3);
+    printf( "${left_margin}Apr 1: %.2f\n", 289.2);
 }
 
     # printf( "${left_margin}Jan 2: %.2f\n", 291.4);
