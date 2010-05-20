@@ -1,0 +1,89 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use DBI;
+use Text::CSV;
+use ConfigReader::Simple;
+
+my $max_gain_rate  = ( 2 / 24 / 60 / 60 );              #lbs per second
+my $max_loss_rate  = ( 2 / 24 / 60 / 60 );              #lbs per second
+my $goal_loss_rate = ( 1000 / 3500 / 24 / 60 / 60 );    #lbs per second
+
+my $config = ConfigReader::Simple->new('/etc/getfit-marv.cfg');
+die "Could not read config! $ConfigReader::Simple::ERROR\n"
+  unless ref $config;
+
+my $GETFIT_DATABASE = $config->get('GETFIT_DATABASE');
+print "DEBUG: $GETFIT_DATABASE\n";
+my $dbh =
+  DBI->connect( "dbi:SQLite:$GETFIT_DATABASE", "", "",
+    { RaiseError => 1, AutoCommit => 1 } );
+
+my $initial_time   = 1262731713;                        # Tuesday, Jan 5 14:49
+my $initial_weight = 177.8;
+my $loss_rate = 1000;   # goal weight loss rate in cals/day, about 2 lb per week
+my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
+my $weight_goal =
+  &get_weight_goal( $initial_time, $initial_weight, $lbs_per_second );
+
+# print "Weight goal: $weight_goal\n";
+# &print_weight_table( $dbh );
+&run_will_filter($dbh);
+
+sub get_weight_goal {
+    my ( $initial_time, $initial_weight, $lbs_per_second ) = @_;
+    my $elapsed_time = time - $initial_time;
+    my $loss         = $elapsed_time * $lbs_per_second;
+    my $weight_goal  = $initial_weight - $loss;
+    $weight_goal = sprintf( "%.2f", $weight_goal );
+    return $weight_goal;
+}
+
+sub print_weight_table {
+    my $dbh = shift;
+    my $weight_readings =
+      $dbh->selectall_arrayref("SELECT * FROM weight_readings ORDER BY id");
+    foreach my $row (@$weight_readings) {
+        my ( $id, $epoch, $weight_reading ) = @$row;
+        print "\t$id\t$epoch\t$weight_reading\n";
+    }
+}
+
+sub run_will_filter {
+    my $dbh                = shift;
+    my $old_time           = 0;
+    my $time_diff          = 0;
+    my $epoch = 1259717580; # December 1, 2009 5:33 PM
+    my $weight_reading     = 307.7;
+    my $old_weight_reading = $weight_reading;
+    my $filter_weight      = $weight_reading;
+    my $min_weight         = $weight_reading;
+    my $max_weight         = $weight_reading;
+
+    my $weight_readings =
+      $dbh->selectall_arrayref("SELECT * FROM weight_readings ORDER BY id");
+    foreach my $row (@$weight_readings) {
+        $old_time           = $epoch;
+        $old_weight_reading = $filter_weight;
+        ( my $id, $epoch, my $weight_reading ) = @$row;
+        $time_diff  = ( $epoch - $old_time );
+        $max_weight = $old_weight_reading + $max_gain_rate * $time_diff;
+        $min_weight = $old_weight_reading - $max_loss_rate * $time_diff;
+        if ( $weight_reading > $max_weight ) {
+            $filter_weight = $max_weight;
+        }
+        elsif ( $weight_reading < $min_weight ) {
+            $filter_weight = $min_weight;
+	    print "DEBUG: MIN $weight_reading, $min_weight, $filter_weight\n";
+        }
+        else {
+            $filter_weight = $weight_reading;
+        }
+
+        #	print "Epoch: $epoch\nOld time: $old_time\nDiff: $time_diff\n----\n";
+	printf ("Fw: %.2f\n", $filter_weight);
+	    $weight_goal = sprintf( "%.2f", $weight_goal );
+        #	print "\t$id\t$epoch\t$old_time\t$weight_reading\t..$time_diff\n";
+
+    }
+}

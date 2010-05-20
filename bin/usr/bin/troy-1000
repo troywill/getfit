@@ -1,0 +1,44 @@
+#!/usr/bin/env perl
+use warnings;
+use strict;
+use ConfigReader::Simple;
+my $config = ConfigReader::Simple->new('/etc/getfit-troy.cfg');
+die "Could not read config! $ConfigReader::Simple::ERROR\n"
+  unless ref $config;
+my $GETFIT_DATABASE = $config->get('GETFIT_DATABASE');
+my $initial_time = $config->get('initial_time');
+my $initial_weight = $config->get('initial_weight');
+my $loss_rate = $config->get('loss_rate');
+my $goal_weight = $config->get('goal_weight');
+
+print "\n------- $goal_weight --------\n";
+
+my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
+my $kgs_per_lb = 0.45359237;
+my $weight_goal = &get_weight_goal($initial_time, $initial_weight, $lbs_per_second);
+my $weight_goal_kg = sprintf( "%.2f", ($weight_goal * $kgs_per_lb));
+
+print "Weight goal this moment: $weight_goal ($weight_goal_kg)\n";
+
+sub get_weight_goal {
+    my ( $initial_time, $initial_weight, $lbs_per_second ) = @_;
+    my $elapsed_time = time - $initial_time;
+    my $loss = $elapsed_time * $lbs_per_second;
+    my $weight_goal = $initial_weight - $loss;
+    $weight_goal = sprintf("%.2f",$weight_goal);
+    return $weight_goal;
+}
+
+&calculate_number_of_hours_until_goal_weight( $initial_weight, $initial_time, $goal_weight, $lbs_per_second );
+
+sub calculate_number_of_hours_until_goal_weight {
+    my ( $initial_weight, $initial_time, $goal_weight, $loss_rate ) = @_;
+    my $weight_loss = $initial_weight - $goal_weight;
+    my $seconds = $weight_loss / $loss_rate;
+    my $final_unix_time = $initial_time + $seconds;
+    print `date --date=\"\@$final_unix_time\"`;
+    my $hours = $seconds / (60*60);
+    my $days = $hours / 24;
+    my $seconds_from_now = $final_unix_time - time;
+    print $seconds_from_now / 3600;
+}
