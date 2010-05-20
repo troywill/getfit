@@ -3,7 +3,10 @@ use warnings;
 use strict;
 print `clear`;
 my $initial_time = 1259717580; # December 1, 2009 5:33 PM
+$initial_time = 1274317302;
+
 my $initial_weight = 183.6;
+$initial_weight = 177.4;
 my $loss_rate = 240; # goal weight loss rate in cals/day, about 1 lb per week
 my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
 my $weight_goal = &get_weight_goal($initial_time, $initial_weight, $lbs_per_second);
