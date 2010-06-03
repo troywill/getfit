@@ -8,6 +8,8 @@ $initial_time = 1275590676; # Thu Jun  3 11:44:45 PDT 2010
 
 my $initial_weight = 183.6;
 $initial_weight = 177.4;
+$initial_weight = 184.4;
+
 my $loss_rate = 1500; # goal weight loss rate in cals/day, 3 lb per week
 my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
 my $weight_goal = &get_weight_goal($initial_time, $initial_weight, $lbs_per_second);
