@@ -5,15 +5,18 @@ use DBI;
 use Text::CSV;
 use ConfigReader::Simple;
 
+my $config = ConfigReader::Simple->new('/etc/getfit.cfg');
+die "Could not read config! $ConfigReader::Simple::ERROR\n"
+  unless ref $config;
+my $GETFIT_DATABASE = $config->get('GETFIT_DATABASE');
+my $CALORIES_PER_DAY = $config->get('CALORIES_PER_DAY');
+
+
 my $max_gain_rate  = ( 2 / 24 / 60 / 60 );              #lbs per second
 my $max_loss_rate  = ( 2 / 24 / 60 / 60 );              #lbs per second
 my $goal_loss_rate = ( 1000 / 3500 / 24 / 60 / 60 );    #lbs per second
 
-my $config = ConfigReader::Simple->new('/etc/getfit.cfg');
-die "Could not read config! $ConfigReader::Simple::ERROR\n"
-  unless ref $config;
 
-my $GETFIT_DATABASE = $config->get('GETFIT_DATABASE');
 my $dbh =
   DBI->connect( "dbi:SQLite:$GETFIT_DATABASE", "", "",
     { RaiseError => 1, AutoCommit => 1 } );
