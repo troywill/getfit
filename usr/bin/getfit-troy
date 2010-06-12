@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-print `clear`;
+
 my $initial_time = 1259717580; # December 1, 2009 5:33 PM
 $initial_time = 1274317302;
 $initial_time = 1275590676; # Thu Jun  3 11:44:45 PDT 2010
