@@ -11,35 +11,15 @@ die "Could not read config! $ConfigReader::Simple::ERROR\n"
 my $GETFIT_DATABASE = $config->get('GETFIT_DATABASE');
 my $CALORIES_PER_DAY = $config->get('CALORIES_PER_DAY');
 
-
-my $max_gain_rate  = ( 2 / 24 / 60 / 60 );              #lbs per second
-my $max_loss_rate  = ( 2 / 24 / 60 / 60 );              #lbs per second
-my $goal_loss_rate = ( 1000 / 3500 / 24 / 60 / 60 );    #lbs per second
-
+my $max_gain_rate  = ( ($CALORIES_PER_DAY/3500) / 24 / 60 / 60 );              #lbs per second
+my $max_loss_rate  = ( ($CALORIES_PER_DAY/3500) / 24 / 60 / 60 );              #lbs per second
 
 my $dbh =
   DBI->connect( "dbi:SQLite:$GETFIT_DATABASE", "", "",
     { RaiseError => 1, AutoCommit => 1 } );
 
-my $initial_time   = 1262731713;                        # Tuesday, Jan 5 14:49
-my $initial_weight = 177.8;
-my $loss_rate = 1000;   # goal weight loss rate in cals/day, about 2 lb per week
-my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
-my $weight_goal =
-  &get_weight_goal( $initial_time, $initial_weight, $lbs_per_second );
 
-# print "Weight goal: $weight_goal\n";
-# &print_weight_table( $dbh );
 &run_will_filter($dbh);
-
-sub get_weight_goal {
-    my ( $initial_time, $initial_weight, $lbs_per_second ) = @_;
-    my $elapsed_time = time - $initial_time;
-    my $loss         = $elapsed_time * $lbs_per_second;
-    my $weight_goal  = $initial_weight - $loss;
-    $weight_goal = sprintf( "%.2f", $weight_goal );
-    return $weight_goal;
-}
 
 sub print_weight_table {
     my $dbh = shift;
@@ -82,30 +62,6 @@ sub run_will_filter {
         }
 
         #	print "Epoch: $epoch\nOld time: $old_time\nDiff: $time_diff\n----\n";
-	printf ("Fw: %.2f\n", $filter_weight);
-	    $weight_goal = sprintf( "%.2f", $weight_goal );
-        #	print "\t$id\t$epoch\t$old_time\t$weight_reading\t..$time_diff\n";
-
+	printf ("Fw: %.2f %.2f\n", $filter_weight, $weight_reading);
     }
 }
-__END__
-    
-#!/usr/bin/env perl
-use strict;
-use warnings;
-use DBI;
-
-my $LOCAL_DATABASE = '/var/lib/stowball/local-repository.db';
-my $dbh_local = DBI->connect("dbi:SQLite:$LOCAL_DATABASE", "", "", {RaiseError => 1, AutoCommit => 1});
-my $STOWBALL_DATABASE = '/var/lib/stowball/local-repository.db';
-my $dbh_stowball = DBI->connect("dbi:SQLite:$STOWBALL_DATABASE", "", "", {RaiseError => 1, AutoCommit => 1});
-
-my $installed_packages = $dbh_local->selectall_arrayref("SELECT * FROM installed_packages ORDER BY package_id");
-foreach my $row (@$installed_packages) {
-    my ($id, $installed_package, $date_checked ) = @$row;
-    print "\t$installed_package\t$date_checked\n";
-}
-
-exit;
-1263667681
-1263667739
