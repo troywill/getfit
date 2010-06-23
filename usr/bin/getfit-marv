@@ -3,10 +3,10 @@ use warnings;
 use strict;
 # Note: TDW Marv would like to get down to: 220 to 230
 my $left_margin = "\t\t";
-my $current_weight = 295.4;
-my $initial_time = 1259717580; # December 1, 2009 5:33 PM
-my $initial_weight = 307.7;
-my $loss_rate = 500; # goal weight loss rate in cals/day, about 1 lb per week
+my $current_weight = 295.0;
+my $initial_time = 1277311380; # date +%s --date="June 23 9:43 AM"
+my $initial_weight = 295.0;
+my $loss_rate = 945; # goal weight loss rate in cals/day, about 1 lb per week
 my $lbs_per_second = $loss_rate / 3500 / 24 / 60 / 60;
 my $weight_goal = &get_weight_goal($initial_time, $initial_weight, $lbs_per_second);
 
