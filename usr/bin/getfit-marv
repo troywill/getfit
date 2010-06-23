@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 use warnings;
 use strict;
-print `clear`;
 # Note: TDW Marv would like to get down to: 220 to 230
 my $left_margin = "\t\t";
 my $current_weight = 295.4;
